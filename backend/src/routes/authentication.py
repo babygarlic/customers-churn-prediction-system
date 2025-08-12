@@ -1,9 +1,10 @@
 from fastapi import APIRouter, Request, Response, HTTPException, Depends, status
-from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
+from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm,HTTPBasic, HTTPBasicCredentials
 from pydantic import BaseModel  
 from sqlalchemy.orm import Session
 from src.database.models import get_db 
 from datetime import timedelta
+from src.auth import get_current_user
 import os
 from dotenv import load_dotenv
 from src.database.db import (
@@ -24,7 +25,7 @@ except:
 
 # create router
 router = APIRouter()
-
+security = HTTPBasic()
 # khỏi tạo các schema 
 class UserCreate(BaseModel):
     username:str
@@ -38,7 +39,7 @@ class Token(BaseModel):
     access_token: str
     token_type: str
 # OAuth2 scheme
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/auth/login")
 
 @router.post("/register")
 async def register(user:UserCreate,db: Session= Depends(get_db)):
@@ -69,7 +70,6 @@ async def login(form_data:OAuth2PasswordRequestForm = Depends(), db: Session= De
     return {"access_token": access_token, "token_type": "bearer"}
 
 
-@router.get("/users/me")    
-async def read_users_me(current_user: UserCreate ):
-    "API lấy thông tin người dùng hiển thị lên trang profile"
+@router.get("/users/me")
+async def read_users_me(current_user: User = Depends(get_current_user)):
     return {"username": current_user.username}

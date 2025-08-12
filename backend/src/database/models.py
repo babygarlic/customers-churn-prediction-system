@@ -20,18 +20,22 @@ class User(Base):
     # Quan hệ 1-n với Token
     tokens = relationship("Token", back_populates="user")
 
+
+#1 cần phải test lại cách chuẩn hóa dữ liệu thô
+#2 kiểm tra các kiểu dữ liệu tích hợp one hot end code 
+# kiểm tra dự đoán của model và lưu kết quả 
 # bảng customerdata
-class CustomerData(Base):
+class CustomerData(Base):# Vấn đè đang nằm ở kiểu dữ liệu của các schema và cách dữ liệu đàu vào  được chuẩn hóa.
     __tablename__ = "customerdata"
     id = Column(String, primary_key=True, index=True, default=lambda: str(uuid.uuid4()))
-    gender = Column(Integer, nullable=False)
-    seniorCitizen = Column(Integer, nullable=False)
-    partner = Column(Integer, nullable=False)
-    dependents = Column(Integer, nullable=False)
-    tenure = Column(Integer, nullable=False)
-    phoneService = Column(Integer, nullable=False)
-    multipleLines = Column(Integer, nullable=False)
-    internetService = Column(String, nullable=False)
+    gender = Column(String, nullable=False) # chuyển vè kiểu string
+    seniorCitizen = Column(Integer, nullable=False) # đúng 
+    partner = Column(String, nullable=False) # yes no - > chuyển về string
+    dependents = Column(String, nullable=False)# yes no - > chuyển về string
+    tenure = Column(Integer, nullable=False)# 1-72 nên để là interger
+    phoneService = Column(String, nullable=False)# yes no - > chuyển về string
+    multipleLines = Column(String, nullable=False) # chuyển về strinh 
+    internetService = Column(String, nullable=False) # string
     onlineSecurity = Column(Integer, nullable=False)
     onlineBackup = Column(Integer, nullable=False)
     deviceProtection = Column(Integer, nullable=False)

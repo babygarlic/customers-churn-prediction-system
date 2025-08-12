@@ -1,4 +1,5 @@
 from fastapi import Depends, HTTPException, status
+from fastapi.security import OAuth2PasswordBearer
 from passlib.context import CryptContext
 from jose import JWTError,jwt
 from datetime import datetime, timedelta
@@ -19,7 +20,7 @@ except TypeError as e:
 
 # Khởi tạo password hashing
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
-
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/auth/login")
 
 #  xác thực mật khẩu 
 def verify_password(plain_password:str, hashed_password:str):
@@ -41,7 +42,7 @@ def create_access_token(data:dict, expires_delta: Optional[timedelta]=None):
     return encoded_jwt
 
 # lấy người dùng hiện tại
-def get_current_user(token, db:Session=Depends(get_db)):
+def get_current_user(token: str = Depends(oauth2_scheme), db:Session=Depends(get_db)):
     #tạo biến lưu trữ lỗi đăng nhập
     credentials_exception = HTTPException(
         status_code= status.HTTP_401_UNAUTHORIZED,
@@ -59,4 +60,4 @@ def get_current_user(token, db:Session=Depends(get_db)):
     if user is None:
         raise credentials_exception
     return user
-    
+

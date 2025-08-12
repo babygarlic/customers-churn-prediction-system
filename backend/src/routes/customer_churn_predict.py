@@ -1,11 +1,16 @@
-from fastapi import APIRouter, Request, Response, HTTPException, Depends
+from fastapi import APIRouter, Request, Response, HTTPException, Depends, Header
+
+from typing import Annotated
+from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from pydantic import BaseModel , Field
 from sqlalchemy.orm import Session
-from src.database.models import get_db, CustomerData
+from src.database.models import get_db, CustomerData, User
 from src.database.db import get_model , create_customers_data
 from src.ai_prediction import predict_one_sample
+from src.auth import get_current_user
 # khởi tạo router
 router = APIRouter()
+security = HTTPBearer()
 # Khỏi tạo các schema 
 class CustomerInput(BaseModel):
     gender: str = Field(..., example="Male")  # "Male" or "Female"
@@ -31,46 +36,44 @@ class CustomerInput(BaseModel):
 
 # tạo các endpoint
 @router.post("/predict-one") # kiểm tra form do người dùng gửi  -> dự đoán -> lưu vào cơ sở dữ liệu -> Trả kết quả cho người dùng :Tỉ lệ rời bỏ + Model dự đoán
-async def predict_one(requets : Request,data: CustomerInput, model_id :str, db: Session = Depends(get_db)):
+async def predict_one(data: CustomerInput, model_id :str,current_user:Annotated[User, Depends(get_current_user)],db: Session = Depends(get_db)):
     """Dự đoán cho một sample"""
     # xử lý xác thực ngươi dùng 
-    # xử lý dự đoán sau khi xác thực 
-    customer_data =data
-    print("thông tin nhận ",customer_data)
-    model = get_model(db,model_id)
-    prediction = predict_one_sample(data, model.file_path,)
-    # lưu dữ liệu vào database
-    print(customer_data)
     try:
+    # xử lý dự đoán sau khi xác thực
+        customer_data =data
+        model = get_model(db,model_id)
+        prediction = predict_one_sample(data, model.file_path,)
+        # lưu dữ liệu vào database
+        print(customer_data)
         customer = CustomerData(
-            gender = customer_data.gender,
-            seniorCitizen= customer_data.SeniorCitizen,
-            partner=customer_data.Partner,
-            dependents = customer_data.Dependents,
-            tenure = customer_data.tenure,
-            phoneService = customer_data.PhoneService,
-            multipleLines = customer_data.MultipleLines,
-            internetService = customer_data.InternetService,
-            onlineSecurity = customer_data.OnlineSecurity,
-            onlineBackup = customer_data.OnlineBackup,
-            deviceProtection = customer_data.DeviceProtection,
-            techSupport = customer_data.TechSupport,
-            streamingTV = customer_data.StreamingTV,
-            streamingMovies = customer_data.StreamingMovies,
-            contract = customer_data.Contract,
-            paperlessBilling = customer_data.PaperlessBilling,
-            paymentMethod = customer_data.PaymentMethod,
-            monthlyCharges = customer_data.MonthlyCharges,
-            totalCharges = customer_data.TotalCharges,
-            churn = prediction["Prediction"],
-            created_by = customer_data.Created_by
-        )
-        print("loioc khi nhận thong tin")
+                gender = customer_data.gender,
+                seniorCitizen= customer_data.SeniorCitizen,
+                partner=customer_data.Partner,
+                dependents = customer_data.Dependents,
+                tenure = customer_data.tenure,
+                phoneService = customer_data.PhoneService,
+                multipleLines = customer_data.MultipleLines,
+                internetService = customer_data.InternetService,
+                onlineSecurity = customer_data.OnlineSecurity,
+                onlineBackup = customer_data.OnlineBackup,
+                deviceProtection = customer_data.DeviceProtection,
+                techSupport = customer_data.TechSupport,
+                streamingTV = customer_data.StreamingTV,
+                streamingMovies = customer_data.StreamingMovies,
+                contract = customer_data.Contract,
+                paperlessBilling = customer_data.PaperlessBilling,
+                paymentMethod = customer_data.PaymentMethod,
+                monthlyCharges = customer_data.MonthlyCharges,
+                totalCharges = customer_data.TotalCharges,
+                churn = prediction["Prediction"],
+                created_by = current_user.id
+            )
         customercreated = create_customers_data(db,customer)
         if customercreated:
             print("Lưu dữ liệu thành công!") # luue data vào cơ sở dữ liệu
     except Exception as e:
-        print(e)
+        raise HTTPException(status_code=400, detail=str(e))
     return  prediction
 
 @router.post("/predict-multiple") # kiểm tra form do người dùng gửi  -> dự đoán -> lưu vào cơ sở dữ liệu -> Trả kết quả cho người dùng :Tỉ lệ rời bỏ + Model dự đoán

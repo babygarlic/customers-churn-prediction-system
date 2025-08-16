@@ -36,7 +36,7 @@ class CustomerInput(BaseModel):
 
 # tạo các endpoint
 @router.post("/predict-one") # kiểm tra form do người dùng gửi  -> dự đoán -> lưu vào cơ sở dữ liệu -> Trả kết quả cho người dùng :Tỉ lệ rời bỏ + Model dự đoán
-async def predict_one(data: CustomerInput, model_id :str,current_user:Annotated[User, Depends(get_current_user)],db: Session = Depends(get_db)):
+async def predict_one(data: CustomerInput, model_id :str, current_user:Annotated[User, Depends(get_current_user)],db: Session = Depends(get_db)):
     """Dự đoán cho một sample"""
     # xử lý xác thực ngươi dùng 
     try:

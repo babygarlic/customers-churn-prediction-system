@@ -1,7 +1,6 @@
 # 🎯 API Dự đoán Khách hàng Rời bỏ (Customer Churn Prediction API)  
 
 Hệ thống API dựa trên Machine Learning, cho phép dự đoán khả năng khách hàng rời bỏ dịch vụ với các mô hình được huấn luyện trên tập dữ liệu **Telco Customer Churn** .  
-![License](https://img.shields.io/badge/license-MIT-blue.svg)
 ![Version](https://img.shields.io/badge/version-1.0.0-green.svg)
 ![Python](https://img.shields.io/badge/python-3.8+-blue.svg)
 ![Accuracy](https://img.shields.io/badge/accuracy-85%25+-brightgreen.svg)
@@ -30,5 +29,6 @@ Hệ thống API dựa trên Machine Learning, cho phép dự đoán khả năng
 - **Cơ sở dữ liệu SQLite:** Lưu trữ thông tin khách hàng, kết quả dự đoán và báo cáo.  
 - **Theo dõi lịch sử:** Lưu lịch sử dự đoán và phân tích xu hướng rời bỏ.  
 ---
+
 
 

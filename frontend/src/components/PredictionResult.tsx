@@ -54,12 +54,12 @@ export const PredictionResult: React.FC<PredictionResultProps> = ({ prediction, 
           <div className="mb-8">
             <div className="flex items-center justify-between mb-3">
               <h3 className="text-lg font-medium text-gray-900">Churn Probability</h3>
-              <span className="text-3xl font-bold text-gray-900">{prediction.Probability}%</span>
+              <span className="text-3xl font-bold text-gray-900">{Number(prediction.Probability.toFixed(3))*100}%</span>
             </div>
             <div className="w-full bg-gray-200 rounded-full h-3 overflow-hidden">
               <div 
-                className={`h-full bg-gradient-to-r ${getProgressBarColor(prediction.Probability)} transition-all duration-1000 ease-out`}
-                style={{ width: `${prediction.Probability}%` }}
+                className={`h-full bg-gradient-to-r ${getProgressBarColor(Number(prediction.Probability.toFixed(3))*100)} transition-all duration-1000 ease-out`}
+                style={{ width: `${Number(prediction.Probability.toFixed(3))*100}%` }}
               ></div>
             </div>
           </div>

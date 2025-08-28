@@ -55,7 +55,6 @@ async def register(user:UserCreate,db: Session= Depends(get_db)):
 async def login(form_data:OAuth2PasswordRequestForm = Depends(), db: Session= Depends(get_db) ):
     """API lấy token"""
     user = get_user(db, form_data.username)
-    print (user.username, user.hashed_password)
     if not user or verify_password(form_data.password,user.hashed_password) ==False:
         raise HTTPException(
             status_code= status.HTTP_401_UNAUTHORIZED,
@@ -67,9 +66,14 @@ async def login(form_data:OAuth2PasswordRequestForm = Depends(), db: Session= De
         access_token = create_access_token(
             data={"sub": user.username}, expires_delta=access_token_expires
         )
-    return {"access_token": access_token, "token_type": "bearer"}
+    return {
+                "access_token": access_token,
+                "token_type": "bearer",
+                "username": user.username
+            }
 
 
 @router.get("/users/me")
 async def read_users_me(current_user: User = Depends(get_current_user)):
+    """Lấy thông tin user hiện tại"""
     return {"username": current_user.username}

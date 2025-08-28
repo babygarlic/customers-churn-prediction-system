@@ -63,6 +63,7 @@ class Models(Base):
     __tablename__ = "models"
     id = Column(String, primary_key=True, index=True, default=lambda: str(uuid.uuid4()))  # Sửa từ nullale thành nullable
     model_name = Column(String, nullable=False)
+    accuracy = Column(Float, nullable=True)
     description = Column(String)
     file_path = Column(String, nullable=False)
 

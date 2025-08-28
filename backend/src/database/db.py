@@ -1,4 +1,5 @@
 from sqlalchemy.orm import Session
+from sqlalchemy import select
 from datetime import timedelta
 from .models import(
     User,
@@ -25,6 +26,19 @@ def add_model(modelname: str,description:str ,path:str, db: Session):
 # lấy toàn bộ model 
 def get_models(db:Session):     
     return db.query(Models).all()
+# lấy toàn bộ model nhưng không lấy path
+def get_models_notpath(db:Session):
+    query = select(Models.id, Models.model_name, Models.description, Models.accuracy)
+    result = db.execute(query).all()
+    return [
+            {
+                "id": row[0],
+                "model_name": row[1],
+                "description": row[2],
+                "accuracy": row[3]
+            }
+            for row in result
+        ]
 
 # lấy thông tin model dựa trên id
 def get_model(db:Session, model_id: str):

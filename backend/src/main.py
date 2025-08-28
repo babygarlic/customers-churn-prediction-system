@@ -2,7 +2,11 @@ from fastapi import FastAPI , HTTPException, Request, Response
 from fastapi.middleware.cors import CORSMiddleware
 from .routes import authentication, customer_churn_predict, token,models_predict
 
-app = FastAPI()
+app = FastAPI(
+    version="1.0.0",
+    title="Backend API for ML Model Management",
+    description="This is a backend API for managing and deploying machine learning models.",
+)
 
 app.add_middleware(CORSMiddleware,
                    allow_origins=["http://localhost:5173"],  # Adjust this to your frontend's URL in production

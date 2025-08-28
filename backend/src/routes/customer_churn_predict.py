@@ -39,11 +39,13 @@ class CustomerInput(BaseModel):
 async def predict_one(data: CustomerInput, model_id :str, current_user:Annotated[User, Depends(get_current_user)],db: Session = Depends(get_db)):
     """Dự đoán cho một sample"""
     # xử lý xác thực ngươi dùng 
+    
     try:
     # xử lý dự đoán sau khi xác thực
+        print(data)
         customer_data =data
         model = get_model(db,model_id)
-        prediction = predict_one_sample(data, model.file_path,)
+        prediction = predict_one_sample(data, model.file_path,) #result của model trả về 2 giá trị: Prediction và Probability data tyoe dict
         # lưu dữ liệu vào database
         print(customer_data)
         customer = CustomerData(
@@ -71,12 +73,54 @@ async def predict_one(data: CustomerInput, model_id :str, current_user:Annotated
             )
         customercreated = create_customers_data(db,customer)
         if customercreated:
-            print("Lưu dữ liệu thành công!") # luue data vào cơ sở dữ liệu
+            print("Lưu dữ liệu thành công!") # luu data vào cơ sở dữ liệu
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))
+    
+    if prediction["Probability"] >=0.3 and prediction["Probability"]<0.6:
+        prediction["RiskLevel"] = "Medium Risk"
+    elif prediction["Probability"] >=0.6:
+        prediction["RiskLevel"] = "High Risk"
+    else:
+        prediction["RiskLevel"] = "Low Risk"
+   
     return  prediction
 
-@router.post("/predict-multiple") # kiểm tra form do người dùng gửi  -> dự đoán -> lưu vào cơ sở dữ liệu -> Trả kết quả cho người dùng :Tỉ lệ rời bỏ + Model dự đoán
-async def predict_mutiple():
+@router.post("/predict-multiple") # kiểm tra form do người dùng gửi  -> dự đoán -> lưu vào cơ sở dữ liệu -> Trả kết quả cho người dùng :Tỉ lệ rời bỏ 
+async def predict_mutiple(data: list[CustomerInput], model_id: str, current_user: Annotated[User, Depends(get_current_user)], db: Session = Depends(get_db)):
     """Dự đoán cho nhiều sample"""
-    pass
+    list_customers = data 
+    list_predictions = []
+    model = get_model(db, model_id)
+    for customer_data in list_customers:
+        prediction = predict_one_sample(customer_data, model.file_path)
+        list_predictions.append(prediction)
+        # lưu dữ liệu vào database
+        customer = CustomerData(
+            gender = customer_data.gender,
+            seniorCitizen= customer_data.SeniorCitizen,
+            partner=customer_data.Partner,
+            dependents = customer_data.Dependents,
+            tenure = customer_data.tenure,
+            phoneService = customer_data.PhoneService,
+            multipleLines = customer_data.MultipleLines,
+            internetService = customer_data.InternetService,
+            onlineSecurity = customer_data.OnlineSecurity,
+            onlineBackup = customer_data.OnlineBackup,
+            deviceProtection = customer_data.DeviceProtection,
+            techSupport = customer_data.TechSupport,
+            streamingTV = customer_data.StreamingTV,
+            streamingMovies = customer_data.StreamingMovies,
+            contract = customer_data.Contract,
+            paperlessBilling = customer_data.PaperlessBilling,
+            paymentMethod = customer_data.PaymentMethod,
+            monthlyCharges = customer_data.MonthlyCharges,
+            totalCharges = customer_data.TotalCharges,
+            churn = prediction["Prediction"],
+            created_by = current_user.id
+        )
+        customercreated = create_customers_data(db, customer)
+        if customercreated:
+            print("Lưu dữ liệu thành công!")
+    return list_predictions
+

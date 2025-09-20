@@ -7,7 +7,7 @@ from typing import Optional
 from dotenv import load_dotenv
 import os
 from .database.models import get_db
-from .database.db import get_user
+from .database.db import get_user_name
 from sqlalchemy.orm import Session
 
 load_dotenv()
@@ -44,6 +44,7 @@ def create_access_token(data:dict, expires_delta: Optional[timedelta]=None):
 # lấy người dùng hiện tại
 def get_current_user(token: str = Depends(oauth2_scheme), db:Session=Depends(get_db)):
     #tạo biến lưu trữ lỗi đăng nhập
+    print(token)
     credentials_exception = HTTPException(
         status_code= status.HTTP_401_UNAUTHORIZED,
         detail= "Could not vaildate credential",
@@ -51,12 +52,13 @@ def get_current_user(token: str = Depends(oauth2_scheme), db:Session=Depends(get
     )
     try:
         payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+        print(payload)
         username: str = payload.get("sub")
         if username is None:
             raise credentials_exception
     except JWTError:
         raise credentials_exception
-    user = get_user(db,username)
+    user = get_user_name(db,username)
     if user is None:
         raise credentials_exception
     return user

@@ -8,7 +8,7 @@ from src.auth import get_current_user
 import os
 from dotenv import load_dotenv
 from src.database.db import (
-    get_user,
+    get_user_email,
     create_user,
     User             
                          )
@@ -44,7 +44,8 @@ oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/auth/login")
 @router.post("/register")
 async def register(user:UserCreate,db: Session= Depends(get_db)):
     """API đăng kí tài khoản"""
-    checkuser = get_user(db,user.username) # kiểm tra xem thông tin user name đã có hay chưa
+    print(user)
+    checkuser = get_user_email(db,user.username) # kiểm tra xem thông tin email đã có hay chưa
     if checkuser:
         raise HTTPException(status_code= 400, detail="Username already registered")
     hashed_password = get_password_hash(user.password)
@@ -54,6 +55,7 @@ async def register(user:UserCreate,db: Session= Depends(get_db)):
 @router.post("/login")
 async def login(form_data:OAuth2PasswordRequestForm = Depends(), db: Session= Depends(get_db) ):
     """API lấy token"""
+    print(form_data.username)
     user = get_user(db, form_data.username)
     if not user or verify_password(form_data.password,user.hashed_password) ==False:
         raise HTTPException(

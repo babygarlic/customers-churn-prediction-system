@@ -54,7 +54,7 @@ export const PredictionResult: React.FC<PredictionResultProps> = ({ prediction, 
           <div className="mb-8">
             <div className="flex items-center justify-between mb-3">
               <h3 className="text-lg font-medium text-gray-900">Churn Probability</h3>
-              <span className="text-3xl font-bold text-gray-900">{Number(prediction.Probability.toFixed(3))*100}%</span>
+              <span className="text-3xl font-bold text-gray-900">{Number((prediction.Probability*100)).toFixed(2)}%</span>
             </div>
             <div className="w-full bg-gray-200 rounded-full h-3 overflow-hidden">
               <div 
@@ -68,7 +68,7 @@ export const PredictionResult: React.FC<PredictionResultProps> = ({ prediction, 
           <div className="mb-8">
             <div className={`inline-flex items-center space-x-2 px-4 py-2 rounded-lg border ${getRiskColor(prediction.RiskLevel)}`}>
               {getRiskIcon(prediction.RiskLevel)}
-              <span className="font-medium">{prediction.RiskLevel} Risk</span>
+              <span className="font-medium">{prediction.RiskLevel}</span>
             </div>
           </div>
 

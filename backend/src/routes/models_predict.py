@@ -2,7 +2,7 @@ from fastapi import APIRouter, Request, Response, HTTPException, Depends
 from pydantic import BaseModel
 from typing import Annotated
 from sqlalchemy.orm import Session
-from src.database.models import  get_db, User
+from ..database.models import  get_db, User
 from src.database.db import get_models, get_model, get_models_notpath
 from src.auth import get_current_user
 # khởi tạo router

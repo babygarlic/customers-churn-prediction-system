@@ -56,7 +56,7 @@ async def register(user:UserCreate,db: Session= Depends(get_db)):
 async def login(form_data:OAuth2PasswordRequestForm = Depends(), db: Session= Depends(get_db) ):
     """API lấy token"""
     print(form_data.username)
-    user = get_user(db, form_data.username)
+    user = get_user_email(db, form_data.username)
     if not user or verify_password(form_data.password,user.hashed_password) ==False:
         raise HTTPException(
             status_code= status.HTTP_401_UNAUTHORIZED,

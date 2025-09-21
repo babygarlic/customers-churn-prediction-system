@@ -26,12 +26,15 @@ export const AuthForm: React.FC<AuthFormProps> = ({ mode, onToggle }) => {
         success = await login(email, password);
       } else {
         success = await register(email, password, name);
+        if (success) {
+          success = await login(email, password); // 👉 auto đăng nhập luôn
+        }
       }
 
       if (!success) {
         setError(mode === 'login' 
           ? 'Invalid credentials. Please try again.' 
-          : 'Registration fai   led. Please check your information.'
+          : 'Registration failed. Please check your information.'
         );
       }
     } catch (err) {

@@ -98,7 +98,7 @@ export const PredictionResult: React.FC<PredictionResultProps> = ({ prediction, 
       <div className="bg-gradient-to-r from-blue-50 to-purple-50 rounded-xl p-6 border border-blue-200">
         <h3 className="text-lg font-medium text-gray-900 mb-2">Next Steps</h3>
         <p className="text-gray-700 mb-4">
-          Based on the analysis, this customer has a <strong>{prediction.RiskLevel.toLowerCase()} risk</strong> of churning. 
+          Based on the analysis, this customer has a <strong>{prediction.RiskLevel.toLowerCase()}</strong> of churning. 
           {prediction.RiskLevel === 'High' && ' Immediate action is recommended to retain this customer.'}
           {prediction.RiskLevel === 'Medium' && ' Monitor closely and consider preventive measures.'}
           {prediction.RiskLevel === 'Low' && ' Continue with standard retention strategies.'}

@@ -15,7 +15,6 @@ def preprocess_new_data(df_test, encoded_columns):
     print (df_test_encoded.info())
     return df_test_encoded
 
-
 # function xử lý dự đoán
 def predict_one_sample(sample,model_path):# truyền vào model name cần điều chỉnh lại dữ liệu đầu vào của hàm
     # khai báo danh sách các biến theo thứ tự khi đưa vào mô hình

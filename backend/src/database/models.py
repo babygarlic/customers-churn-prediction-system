@@ -12,7 +12,7 @@ Base = declarative_base()
 class User(Base):
     __tablename__ = "users"
     id = Column(String, primary_key=True, index=True, default=lambda: str(uuid.uuid4()))
-    username = Column(String, unique=True, index=True)
+    username = Column(String, index=True)
     email = Column(String, unique=True, index=True)
     hashed_password = Column(String) 
     # Quan hệ 1-n với CustomerData

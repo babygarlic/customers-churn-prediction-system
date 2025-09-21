@@ -18,10 +18,7 @@ from ..auth import(
     create_access_token)
 
 load_dotenv()
-try:
-    ACCESS_TOKEN_EXPIRE_MINUTES = os.getenv("ACCESS_TOKEN_EXPIRE_MINUTES")
-except:
-    print("khong lay duoc evn!")
+ACCESS_TOKEN_EXPIRE_MINUTES = os.getenv("ACCESS_TOKEN_EXPIRE_MINUTES")
 
 # create router
 router = APIRouter()

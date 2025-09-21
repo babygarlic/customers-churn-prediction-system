@@ -4,6 +4,7 @@ from passlib.context import CryptContext
 from datetime import datetime, timedelta
 from typing import Optional
 from dotenv import load_dotenv
+from jose import jwt , JWTError
 import os
 from .database.models import get_db
 from .database.db import get_user_name
